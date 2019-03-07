@@ -5,7 +5,7 @@
 """
 
 import kitti
-import AU2csv
+import CSV
 
 import os
 
@@ -41,7 +41,7 @@ for annotationFile in annotationFiles:
     imagepathWithExtension =[x for x in imagesInDirectory if os.path.splitext(x)[0]==imagepathWithoutext]
 
     AUanno = kitti.kitti2AU(kittianno,filename=annotationFile)
-    csvanno = AU2csv.AU2csv(AUanno)
-    AU2csv.csvlist2file(csvAnnotationList=csvanno,outputpath=exportdir)
+    csvanno = CSV.AU2csv(AUanno)
+    CSV.csvlist2file(csvAnnotationList=csvanno,outputpath=exportdir)
 
     pass

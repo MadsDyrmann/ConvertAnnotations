@@ -8,8 +8,6 @@ import kitti
 import pandas as pd
 
 import os
-from concurrent.futures import ThreadPoolExecutor
-executor = ThreadPoolExecutor(max_workers=30)
 
 CROPBBOXTOIMAGE = True
 
@@ -47,4 +45,3 @@ for annotationFile in annotationFiles:
         filename, ext = os.path.splitext(os.path.basename(annotationFile))
 
         df.to_csv(os.path.join(exportdir,filename+'.csv'),sep=';')
-
