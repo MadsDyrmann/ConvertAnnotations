@@ -29,8 +29,26 @@
 #import xml.etree.cElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 import os
+import pandas as pd
 
 executor = ThreadPoolExecutor(max_workers=30)
+
+
+
+def AU2csvfile(AUAnnotationList, outputpath=None):
+    df = pd.DataFrame(AUAnnotationList)
+    
+    #get unique file-names, as we want a file per image
+    uniquefilenames = df['imagepath'].unique().tolist()
+    
+    for filename in uniquefilenames:
+        dftmp = df[['label', 'labelnumeric', 'imagewidth', 'imageheight','xmin', 'ymin', 'xmax', 'ymax', 'occlusion','objectix']].loc[df['imagepath']==filename]
+
+        filename, ext = os.path.splitext(filename)
+        outoutfilepath = os.path.join(outputpath,filename+'.csv')
+        dftmp.to_csv(outoutfilepath,index=False, sep=',')
+        
+
 
 
 def AU2csv(AUAnnotationList):
@@ -38,7 +56,7 @@ def AU2csv(AUAnnotationList):
     csvAnnotationList = []
     for anno in AUAnnotationList:
         #Split the string at spaces, but respect quotes in specie's names
-        csvline = [anno['imagepath'],anno['xmin'],anno['ymin'],anno['xmax'],anno['ymax'],anno['label']]
+        csvline = [anno['imagepath'],anno['xmin'],anno['ymin'],anno['xmax'],anno['ymax'],anno['label'],str(anno['labelnumeric'])]
         csvline = [x if ',' not in x else '"'+x+'"' for x in csvline] # add '"' if comma exist in entry
 
         csvAnnotationList.append(csvline)
@@ -59,8 +77,12 @@ def csvlist2file(csvAnnotationList,outputpath=None):
 
         filename, ext = os.path.splitext(filename)
         outoutfilepath = os.path.join(outputpath,filename+'.csv')
+        
+        
+        
         with open(outoutfilepath,'w') as fid:
-            fid.writelines(annotationStringlist)
+            fid.write('\n'.join(csvAnnotationList))
+            #fid.writelines(annotationStringlist)
 
 
 def csvanno2string(csvline, sep=','):
